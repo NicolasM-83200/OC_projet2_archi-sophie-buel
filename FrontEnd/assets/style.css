@@ -3,93 +3,14 @@
    License: none (public domain)
 */
 
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
+* {
   margin: 0;
   padding: 0;
   border: 0;
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  text-decoration: none;
 }
 /* HTML5 display-role reset for older browsers */
 article,
@@ -129,10 +50,12 @@ table {
 }
 /** end reset css**/
 body {
-  max-width: 1140px;
-  margin: auto;
   font-family: "Work Sans";
   font-size: 14px;
+}
+.wrapper {
+  max-width: 1140px;
+  margin: auto;
 }
 header {
   display: flex;
@@ -170,12 +93,17 @@ nav ul {
   list-style-type: none;
 }
 nav li {
-  padding: 0 10px;
+  padding-left: 50px;
   font-size: 1.2em;
 }
-
-li:hover {
+nav li a {
+  color: black;
+}
+a:hover {
   color: #b1663c;
+}
+.logout {
+  display: none;
 }
 #introduction {
   display: flex;
@@ -286,4 +214,87 @@ footer nav ul {
   display: flex;
   justify-content: flex-end;
   margin: 2em;
+}
+
+/* ------------ CSS login.html --------------- */
+
+#login {
+  width: 50%;
+  max-width: 400px;
+  margin: auto;
+}
+#login > * {
+  text-align: center;
+}
+#login h2 {
+  margin-bottom: 20px;
+}
+#login form {
+  text-align: left;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+#login input {
+  height: 50px;
+  font-size: 1.2em;
+  border: none;
+  outline: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+#login label {
+  margin: 2em 0 1em 0;
+}
+#login a {
+  margin: 0 auto;
+  color: black;
+  text-decoration: underline;
+}
+#login a:hover {
+  color: #b1663c;
+}
+
+/* ---------------- ajout style partie admin ------------ */
+.header-top {
+  height: 50px;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background-color: black;
+  color: white;
+  font-size: 0.8rem;
+  display: none;
+}
+.header-top i {
+  margin-right: 10px;
+}
+.header-top button {
+  padding: 10px 15px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+#introduction .mod-icon {
+  width: 80%;
+  margin: 10px auto;
+  display: none;
+}
+#adminBtn {
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+  margin-left: 30px;
+}
+#adminBtn .mod-icon {
+  display: none;
+}
+.mod-icon {
+  font-family: "Work sans";
+  font-size: 0.9rem;
+  color: black;
+  font-weight: 100;
 }
