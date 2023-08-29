@@ -36,7 +36,9 @@
 			<section id="introduction">
 				<figure>
 					<img src="./assets/images/sophie-bluel.png" alt="">
-					<div class="mod-icon"><i class="fa-solid fa-pen-to-square"></i> modifier</div>
+					<figcaption>
+						<a class="modal-btn" href="#modal1"><i class="fa-solid fa-pen-to-square"></i> modifier</a>
+					</figcaption>
 				</figure>
 				<article>
 					<h2>Designer d'espace</h2>
@@ -51,11 +53,25 @@
 				</article>
 			</section>
 			<section id="portfolio">
-				<h2>Mes Projets
-					<button id="adminBtn">
-						<span class="mod-icon"><i class="fa-solid fa-pen-to-square"></i> modifier</span>
-					</button>
-				</h2>
+				<div class="title">
+					<h2>Mes Projets</h2>
+					<a id="modalBtn2" class="modal-btn" href="#modal2"><i class="fa-solid fa-pen-to-square"></i> modifier</a>
+				</div>
+				<!-- ------------- MODAL ------------- -->
+				<div id="modal2" class="modal">
+					<div class="modal-wrapper">
+						<div class="top-btn">
+							<div class="close"><i class="fa-solid fa-xmark"></i></div>
+						</div>
+						<h3>Galerie photo</h3>
+						<div class="gallery-wrapper"></div>
+						<div class="btn-wrapper">
+							<button class="btn">Ajouter une photo</button>
+							<button class="delete">Supprimer la galerie</button>
+						</div>
+					</div>
+				</div>
+				<!-- ---------- FIN DE MODAL --------- -->
 				<ul class="filter">
 					<li><button id="all" class="btn">Tous</button></li>
 					<li><button id="object" class="btn">Objets</button></li>

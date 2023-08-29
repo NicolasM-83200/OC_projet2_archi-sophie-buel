@@ -278,23 +278,127 @@ footer nav ul {
   font-weight: bold;
   cursor: pointer;
 }
-#introduction .mod-icon {
+#introduction .modal-btn {
   width: 80%;
-  margin: 10px auto;
-  display: none;
+  margin: 10px auto 0;
 }
-#adminBtn {
-  background-color: transparent;
-  cursor: pointer;
-  position: absolute;
-  margin-left: 30px;
+#portfolio .title {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 90px 0 70px;
 }
-#adminBtn .mod-icon {
-  display: none;
+#portfolio h2 {
+  margin: 0;
+  grid-column: 2/3;
 }
-.mod-icon {
+.modal-btn {
   font-family: "Work sans";
   font-size: 0.9rem;
   color: black;
   font-weight: 100;
+  display: flex;
+  align-items: center;
+  visibility: hidden;
+}
+
+/* --------------- Modal --------------- */
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: brightness(0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+.modal-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 10px;
+  width: 24rem;
+  border-radius: 5px;
+  text-align: center;
+}
+.top-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+.close {
+  width: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+.modal-wrapper h3 {
+  font-size: 1.3rem;
+  margin-top: 20px;
+}
+.gallery-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 70%;
+  margin: 30px auto 60px;
+}
+.gallery-wrapper::after {
+  content: "";
+  height: 1px;
+  width: 100%;
+  background-color: #adadad;
+  position: relative;
+  top: 30px;
+}
+.gallery-wrapper figure {
+  width: 50px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.delete-btn {
+  position: absolute;
+  right: 0;
+  margin: 3px;
+  padding: 3px;
+  color: #fff;
+  background-color: black;
+  font-size: 0.6rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.gallery-wrapper img {
+  object-fit: cover;
+  width: 100%;
+}
+.gallery-wrapper figcaption {
+  text-align: left;
+  font-size: 0.6rem;
+}
+.btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+#modal2 .btn {
+  font-size: 0.8rem;
+  padding: 7px 40px;
+  color: white;
+  background-color: #1d6154;
+}
+.btn-wrapper .delete {
+  color: darkorange;
+  background-color: transparent;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.show-modal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }

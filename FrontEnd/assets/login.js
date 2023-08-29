@@ -12,8 +12,8 @@ form.addEventListener("submit", async (e) => {
 
   //création d'un objet "user" contenant l'email et le password renseigné
   let user = {
-    email: email,
-    password: password,
+    email,
+    password,
   };
 
   //envoie requête a l'api avec la méthode "post"

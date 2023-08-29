@@ -67,14 +67,14 @@ const loginBtn = document.querySelector(".login");
 const logoutBtn = document.querySelector(".logout");
 const headerTop = document.querySelector(".header-top");
 const filterBar = document.querySelector(".filter");
-const modIcon = document.querySelector(".mod-icon");
+const modalsBtn = document.querySelectorAll(".modal-btn");
 
 if (sessionStorage.getItem("token")) {
   loginBtn.style.display = "none";
   logoutBtn.style.display = "block";
   headerTop.style.display = "flex";
   filterBar.style.display = "none";
-  modIcon.style.display = "block";
+  modalsBtn.forEach((modalBtn) => (modalBtn.style.visibility = "visible"));
 }
 
 logoutBtn.addEventListener("click", (e) => {
@@ -84,5 +84,82 @@ logoutBtn.addEventListener("click", (e) => {
   logoutBtn.style.display = "none";
   loginBtn.style.display = "block";
   filterBar.style.display = "flex";
-  modIcon.style.display = "none";
+  modalsBtn.forEach((modalBtn) => (modalBtn.style.visibility = "hidden"));
 });
+
+// **************** Affichage modale **************
+const modal = document.querySelector(".modal");
+const modalBtn2 = document.getElementById("modalBtn2");
+const closeBtn = document.querySelector(".close");
+const galleryModal = document.querySelector(".gallery-wrapper");
+
+//ajout de la class "show-modal" pour la faire apparaitre
+function toggleModal() {
+  modal.classList.toggle("show-modal");
+}
+// fermetur au click en dehors de la modal
+function windowOnClick(event) {
+  if (event.target === modal) toggleModal();
+}
+
+modalBtn2.addEventListener("click", () => {
+  fetchDataModal(), toggleModal();
+});
+closeBtn.addEventListener("click", toggleModal);
+window.addEventListener("click", windowOnClick);
+
+//afficher les éléments dans la modal
+const fetchDataModal = async () => {
+  await fetch("http://localhost:5678/api/works")
+    .then((res) => res.json())
+    .then((data) => {
+      galleryModal.innerHTML = data
+        .map(
+          (elem) =>
+            `
+      <figure data-id="${elem.id}">
+        <button class="delete-btn">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+        <img src="${elem.imageUrl}" alt="${elem.title}">
+        <figcaption>éditer</figcaption>
+      </figure>
+    `
+        )
+        .join("");
+    });
+
+  const deleteBtns = document.querySelectorAll(".delete-btn");
+
+  deleteBtns.forEach((deleteBtn) => {
+    deleteBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const figure = e.currentTarget.closest("figure");
+      const workId = figure.dataset.id;
+      console.log(workId);
+
+      if (workId) deleteWork(workId);
+    });
+  });
+};
+
+const deleteWork = async (workId) => {
+  try {
+    const token = sessionStorage.getItem("token");
+    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.ok) {
+      console.log("Travail supprimé avec succés !");
+      fetchDataModal();
+    } else {
+      console.log("Erreur lors de la suppression du travail.");
+      console.log(token);
+    }
+  } catch (error) {
+    console.error("Erreur lors de requête de suppression.");
+  }
+};
