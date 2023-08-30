@@ -12,18 +12,37 @@ const validCategories = new Set([
 ]);
 
 // fonction qui permet la récupération des travaux depuis l'api
-const fetchProjet = async () => {
+const fetchProjet = async (tag) => {
   await fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
     .then((data) => (projectData = data));
   console.log(projectData);
 
-  projectDisplay();
+  if (tag === gallery) {
+    projectDisplay(tag);
+  } else if (tag === galleryModal) {
+    dataModalDisplay(tag);
+  }
+
+  const deleteBtns = document.querySelectorAll(".delete-btn");
+
+  deleteBtns.forEach((deleteBtn) => {
+    deleteBtn.addEventListener("click", (e) => {
+      const figure = e.currentTarget.closest("figure");
+      const workId = figure.dataset.id;
+      console.log(workId);
+
+      if (workId) {
+        deleteWork(workId);
+        fetchProjet(gallery);
+      }
+    });
+  });
 };
 
-// fonction d'affichage des travaux avec possibilité de filtrer par catégories
-const projectDisplay = () => {
-  gallery.innerHTML = projectData
+// fonction d'affichage des travaux dans le portfolio avec possibilité de filtrer par catégories
+const projectDisplay = (tag) => {
+  tag.innerHTML = projectData
     .filter((project) => {
       if (filterData === "all" || validCategories.has(filterData)) {
         // Utilisation d'un Set pour vérifier si la catégorie est valide
@@ -41,25 +60,43 @@ const projectDisplay = () => {
     )
     .join("");
 };
+// fonction d'affichage des travaux dans la fenêtre modale
+const dataModalDisplay = (tag) => {
+  tag.innerHTML = projectData
+    .map(
+      (project) =>
+        `
+      <figure data-id="${project.id}">
+        <button class="delete-btn" type="button">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+        <img src="${project.imageUrl}" alt="${project.title}">
+        <figcaption>éditer</figcaption>
+      </figure>
+    `
+    )
+    .join("");
+};
+
 // affichage des élements dans le portfolio au chargement de la page
-window.addEventListener("load", fetchProjet);
+window.addEventListener("load", fetchProjet(gallery));
 
 // actions des boutons filtre
 all.addEventListener("click", () => {
   filterData = "all";
-  projectDisplay();
+  projectDisplay(gallery);
 });
 object.addEventListener("click", () => {
   filterData = "Objets";
-  projectDisplay();
+  projectDisplay(gallery);
 });
 appart.addEventListener("click", () => {
   filterData = "Appartements";
-  projectDisplay();
+  projectDisplay(gallery);
 });
 hostel.addEventListener("click", () => {
   filterData = "Hotels & restaurants";
-  projectDisplay();
+  projectDisplay(gallery);
 });
 
 // **************** Administrateur *******************
@@ -96,9 +133,8 @@ const galleryModal = document.querySelector(".gallery-wrapper");
 //ajout de la class "show-modal" pour la faire apparaitre
 function toggleModal() {
   modal.classList.toggle("show-modal");
-  const isModalOpen = modal.classList.contains("show-modal");
-  console.log(isModalOpen);
-  sessionStorage.setItem("modalOpen", isModalOpen);
+  // const isModalOpen = modal.classList.contains("show-modal");
+  // sessionStorage.setItem("modalOpen", isModalOpen);
 }
 // fermeture au click en dehors de la modal
 function windowOnClick(e) {
@@ -107,7 +143,8 @@ function windowOnClick(e) {
 
 modalBtn2.addEventListener("click", () => {
   toggleModal();
-  fetchDataModal();
+  // fetchDataModal();
+  fetchProjet(galleryModal);
 });
 closeBtn.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
@@ -147,7 +184,7 @@ const fetchDataModal = async () => {
     });
   });
 };
-
+// fonction permettant la suppression des travaux avec leur Id respectif
 const deleteWork = async (workId) => {
   try {
     const token = sessionStorage.getItem("token");
@@ -172,8 +209,30 @@ const deleteWork = async (workId) => {
 };
 
 // Permet de ré-ouvrir la modal après réactualisation de la page (fonction de live server qui reload automatiquement)
-const wasModalOpen = sessionStorage.getItem("modalOpen") === "true";
-if (wasModalOpen) {
-  fetchDataModal();
-  modal.classList.toggle("show-modal");
+// const wasModalOpen = sessionStorage.getItem("modalOpen") === "true";
+// if (wasModalOpen) {
+//   // fetchDataModal();
+//   fetchProjet(galleryModal);
+//   modal.classList.toggle("show-modal");
+// }
+
+// ***************** Partie Ajout Photo ****************
+
+{
+  // <div class="modal-wrapper">
+  //   <div class="top-btn">
+  //     <div class="back">
+  //       <i class="fa-solid fa-arrow-left"></i>
+  //     </div>
+  //     <div class="close">
+  //       <i class="fa-solid fa-xmark"></i>
+  //     </div>
+  //   </div>
+  //   <h3>Ajout photo</h3>
+  //   <div class="form-wrapper">
+  //   </div>
+  //   <div class="btn-wrapper">
+  //     <button class="btn">Valider</button>
+  //   </div>
+  // </div>;
 }

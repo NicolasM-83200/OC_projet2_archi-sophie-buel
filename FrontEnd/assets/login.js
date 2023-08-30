@@ -26,7 +26,7 @@ form.addEventListener("submit", async (e) => {
   })
     .then((res) => {
       //vérification de la réponse du serveur et redirection en cas d'utilisateur autorisé
-      res.status === 200
+      res.ok
         ? (window.location.href = "/FrontEnd/index.html")
         : alert("Erreur dans l'identifiant ou le mot de passe");
       return res.json();
