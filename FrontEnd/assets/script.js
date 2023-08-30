@@ -88,7 +88,7 @@ logoutBtn.addEventListener("click", (e) => {
 });
 
 // **************** Affichage modale **************
-const modal = document.querySelector(".modal");
+const modal = document.getElementById("modal2");
 const modalBtn2 = document.getElementById("modalBtn2");
 const closeBtn = document.querySelector(".close");
 const galleryModal = document.querySelector(".gallery-wrapper");
@@ -96,14 +96,18 @@ const galleryModal = document.querySelector(".gallery-wrapper");
 //ajout de la class "show-modal" pour la faire apparaitre
 function toggleModal() {
   modal.classList.toggle("show-modal");
+  const isModalOpen = modal.classList.contains("show-modal");
+  console.log(isModalOpen);
+  sessionStorage.setItem("modalOpen", isModalOpen);
 }
-// fermetur au click en dehors de la modal
-function windowOnClick(event) {
-  if (event.target === modal) toggleModal();
+// fermeture au click en dehors de la modal
+function windowOnClick(e) {
+  if (e.target === modal) toggleModal();
 }
 
 modalBtn2.addEventListener("click", () => {
-  fetchDataModal(), toggleModal();
+  toggleModal();
+  fetchDataModal();
 });
 closeBtn.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
@@ -118,7 +122,7 @@ const fetchDataModal = async () => {
           (elem) =>
             `
       <figure data-id="${elem.id}">
-        <button class="delete-btn">
+        <button class="delete-btn" type="button">
           <i class="fa-solid fa-trash-can"></i>
         </button>
         <img src="${elem.imageUrl}" alt="${elem.title}">
@@ -133,12 +137,13 @@ const fetchDataModal = async () => {
 
   deleteBtns.forEach((deleteBtn) => {
     deleteBtn.addEventListener("click", (e) => {
-      e.preventDefault();
       const figure = e.currentTarget.closest("figure");
       const workId = figure.dataset.id;
       console.log(workId);
 
-      if (workId) deleteWork(workId);
+      if (workId) {
+        deleteWork(workId);
+      }
     });
   });
 };
@@ -154,12 +159,21 @@ const deleteWork = async (workId) => {
     });
     if (response.ok) {
       console.log("Travail supprimé avec succés !");
-      fetchDataModal();
-    } else {
-      console.log("Erreur lors de la suppression du travail.");
-      console.log(token);
+      const figure = galleryModal.querySelector(`figure[data-id="${workId}"]`);
+      if (figure) {
+        figure.remove();
+      } else {
+        console.log("Erreur lors de la suppression du travail.");
+      }
     }
   } catch (error) {
     console.error("Erreur lors de requête de suppression.");
   }
 };
+
+// Permet de ré-ouvrir la modal après réactualisation de la page (fonction de live server qui reload automatiquement)
+const wasModalOpen = sessionStorage.getItem("modalOpen") === "true";
+if (wasModalOpen) {
+  fetchDataModal();
+  modal.classList.toggle("show-modal");
+}

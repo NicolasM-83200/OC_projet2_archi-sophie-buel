@@ -314,6 +314,12 @@ footer nav ul {
   transform: scale(1.1);
   transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
+.show-modal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
 .modal-wrapper {
   position: absolute;
   top: 50%;
@@ -395,10 +401,4 @@ footer nav ul {
   background-color: transparent;
   font-size: 0.8rem;
   cursor: pointer;
-}
-.show-modal {
-  opacity: 1;
-  visibility: visible;
-  transform: scale(1);
-  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }
