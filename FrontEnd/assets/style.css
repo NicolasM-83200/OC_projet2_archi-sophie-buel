@@ -327,41 +327,41 @@ footer nav ul {
   transform: translate(-50%, -50%);
   background-color: #fff;
   padding: 10px;
-  width: 24rem;
+  height: 670px;
+  width: 550px;
   border-radius: 5px;
   text-align: center;
 }
 .top-btn {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
-.close {
-  width: 1rem;
+.back {
+  visibility: hidden;
+}
+.close,
+.back {
+  font-size: 1.2rem;
   text-align: center;
   cursor: pointer;
+  background-color: transparent;
 }
 .modal-wrapper h3 {
   font-size: 1.3rem;
   margin-top: 20px;
 }
+/* ********************* Css galerie ********************* */
 .gallery-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  width: 70%;
+  width: 80%;
+  height: 60%;
   margin: 30px auto 60px;
 }
-.gallery-wrapper::after {
-  content: "";
-  height: 1px;
-  width: 100%;
-  background-color: #adadad;
-  position: relative;
-  top: 30px;
-}
 .gallery-wrapper figure {
-  width: 50px;
+  width: 80px;
   margin-bottom: 10px;
+  margin-right: 8px;
   position: relative;
 }
 .delete-btn {
@@ -383,6 +383,62 @@ footer nav ul {
   text-align: left;
   font-size: 0.6rem;
 }
+/* ***************** Css formulaire ****************** */
+.form-wrapper {
+  height: 65%;
+}
+.content {
+  background-color: #e8f1f6;
+  border-radius: 5px;
+  width: 60%;
+  margin: 50px auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+.content i {
+  font-size: 5rem;
+  color: #b9c5cc;
+}
+label[for="content"] {
+  cursor: pointer;
+  color: #306685;
+  background-color: #b9c5cc;
+  padding: 10px 20px;
+  border-radius: 25px;
+  transition: all 300ms ease;
+}
+label[for="content"]:hover {
+  color: #b9c5cc;
+  background-color: #306685;
+}
+input[type="file"] {
+  display: none;
+}
+.title-content,
+.cat-content {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 40px auto;
+  text-align: left;
+}
+.title-content,
+.cat-content label {
+  font-weight: bold;
+}
+input[type="text"],
+select[name="category"] {
+  box-shadow: 0px 2px 10px 0px rgb(145 145 145 / 40%);
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  outline: none;
+  margin: 10px 0;
+}
+/* ******************* Fin formulaire ***************** */
 .btn-wrapper {
   display: flex;
   flex-direction: column;
@@ -390,15 +446,22 @@ footer nav ul {
   gap: 20px;
   margin-bottom: 30px;
 }
+.btn-wrapper:before {
+  content: "";
+  height: 1px;
+  width: 70%;
+  background-color: #adadad;
+  position: relative;
+  top: -10px;
+}
 #modal2 .btn {
-  font-size: 0.8rem;
-  padding: 7px 40px;
+  padding: 10px 40px;
   color: white;
   background-color: #1d6154;
+  width: 50%;
 }
-.btn-wrapper .delete {
+.btn-wrapper .delete-gallery {
   color: darkorange;
   background-color: transparent;
-  font-size: 0.8rem;
   cursor: pointer;
 }
