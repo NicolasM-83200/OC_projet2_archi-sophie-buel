@@ -68,20 +68,15 @@
 								<i class="fa-solid fa-xmark"></i>
 							</button>
 						</div>
-						<h3>Galerie photo</h3>
-						<div class="gallery-wrapper"></div>
-						<div class="btn-wrapper">
-							<button class="btn add-photo-btn">Ajouter une photo</button>
-							<button class="delete-gallery">Supprimer la galerie</button>
-						</div>
+						<div class="modal-content"></div>
 					</div>
 				</div>
 				<!-- ---------- FIN DE MODAL --------- -->
 				<ul class="filter">
-					<li><button id="all" class="btn">Tous</button></li>
-					<li><button id="object" class="btn">Objets</button></li>
-					<li><button id="appart" class="btn">Appartements</button></li>
-					<li><button id="hostel" class="btn">Hôtels & Restaurants</button></li>
+					<li><button data-category="all" class="btn filter-btn">Tous</button></li>
+					<li><button data-category="Objets" class="btn filter-btn">Objets</button></li>
+					<li><button data-category="Appartements" class="btn filter-btn">Appartements</button></li>
+					<li><button data-category="Hotels & restaurants" class="btn filter-btn">Hôtels & Restaurants</button></li>
 				</ul>
 				<div class="gallery"></div>
 			</section>
@@ -109,7 +104,7 @@
 		</footer>
 	</div>
 
-	<script src="./assets/script.js"></script>
+	<script src="./assets/test.js"></script>
 </body>
 
 </html>

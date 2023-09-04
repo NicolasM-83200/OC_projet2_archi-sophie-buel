@@ -350,10 +350,13 @@ footer nav ul {
   font-size: 1.3rem;
   margin-top: 20px;
 }
+.modal-content {
+  height: 100%;
+}
 /* ********************* Css galerie ********************* */
 .gallery-wrapper {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   width: 80%;
   height: 60%;
   margin: 30px auto 60px;
@@ -364,7 +367,7 @@ footer nav ul {
   margin-right: 8px;
   position: relative;
 }
-.delete-btn {
+.delete-work-btn {
   position: absolute;
   right: 0;
   margin: 3px;
@@ -437,6 +440,12 @@ select[name="category"] {
   height: 40px;
   outline: none;
   margin: 10px 0;
+}
+.modal-wrapper input[type="submit"] {
+  width: 50%;
+  margin: 0;
+  font-size: 1.2rem;
+  padding: 10px;
 }
 /* ******************* Fin formulaire ***************** */
 .btn-wrapper {
