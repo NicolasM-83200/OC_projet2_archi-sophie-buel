@@ -17,9 +17,6 @@ const fetchProject = async () => {
   await fetch("http://localhost:5678/api/works")
     .then((res) => res.json())
     .then((data) => (projectData = data));
-  console.log(projectData);
-  projectDisplay();
-  dataModalDisplay(galleryWrapper);
 };
 
 // fonction d'affichage des travaux dans le portfolio avec possibilité de filtrer par catégories
@@ -172,108 +169,154 @@ window.addEventListener("click", (e) => {
 
 // // Evenement au click sur le bouton "ajouter une photo"
 addPhotoBtn.addEventListener("click", () => {
-  replaceWithForm();
-  const deleteGalleryBtn = document.querySelector(".delete-gallery");
-  deleteGalleryBtn.remove();
-  heading.textContent = "Ajout photo";
+  modalWrapper.innerHTML = `
+  <div class="top-btn">
+    <button class="back">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <button class="close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <h3>Ajout photo</h3>
+  <div class="form-wrapper">
+    <form action="#" method="post">
+      <div class="content">
+        <i class="fa-regular fa-image"></i>
+        <label for="content">+ Ajouter photo</label>
+        <input type="file" name="content" id="content">
+      </div>
+      <div class="title-content">
+        <label for="title">Titre</label>
+        <input type="text" name="title" id="title"></div>
+        <div class="cat-content">
+          <label for="category">Catégorie</label>
+          <select name="category" id="category">
+            <option value="">-- Sélectionnez une catégorie --</option>
+            <option value="Objets">Objets</option>
+            <option value="Appartements">Appartements</option>
+            <option value="Hotêls et Réstaurant">Hotêls et Restaurants</option>
+          </select>
+        </div>
+    </form>
+  </div>
+  <div class="btn-wrapper">
+    <button class="btn add-photo-btn">Ajouter une photo</button>
+    <button class="delete-gallery">Supprimer la galerie</button>
+  </div>`;
+  // createForm();
+  // modalWrapper.appendChild(createForm());
+
+  // const deleteGalleryBtn = document.querySelector(".delete-gallery");
+  // deleteGalleryBtn.remove();
+  // heading.textContent = "Ajout photo";
   backBtn.style.visibility = "visible";
-  addPhotoBtn.textContent = "Valider";
+  // addPhotoBtn.textContent = "Valider";
 });
 
 // evenement au click sur le bouton retour dans la modal
 backBtn.addEventListener("click", () => {
-  replaceWithGallery();
-  const btnWrapper = document.querySelector(".btn-wrapper");
-  const deleteGalleryBtn = document.createElement("button");
-  deleteGalleryBtn.classList.add("delete-gallery");
-  deleteGalleryBtn.textContent = "Supprimer la galerie";
-  btnWrapper.appendChild(deleteGalleryBtn);
-  heading.textContent = "Galerie photo";
+  modalWrapper.innerHTML = `
+  <div class="top-btn">
+							<button class="back">
+								<i class="fa-solid fa-arrow-left"></i>
+							</button>
+							<button class="close">
+								<i class="fa-solid fa-xmark"></i>
+							</button>
+						</div>
+						<h3>Galerie photo</h3>
+						<div class="gallery-wrapper"></div>
+						<div class="btn-wrapper">
+							<button class="btn add-photo-btn">Ajouter une photo</button>
+							<button class="delete-gallery">Supprimer la galerie</button>
+						</div>`;
+  // createGallery();
+  fetchProject();
+  // const btnWrapper = document.querySelector(".btn-wrapper");
+  // const deleteGalleryBtn = document.createElement("button");
+  // deleteGalleryBtn.classList.add("delete-gallery");
+  // deleteGalleryBtn.textContent = "Supprimer la galerie";
+  // btnWrapper.appendChild(deleteGalleryBtn);
+  // heading.textContent = "Galerie photo";
   backBtn.style.visibility = "hidden";
-  addPhotoBtn.textContent = "Ajouter une photo";
+  // addPhotoBtn.textContent = "Ajouter une photo";
 });
 
-function replaceWithForm() {
-  const formWrapper = document.createElement("div");
-  formWrapper.classList.add("form-wrapper");
+// function createForm() {
+//   const formWrapper = document.createElement("div");
+//   formWrapper.classList.add("form-wrapper");
 
-  const form = document.createElement("form");
-  form.setAttribute("action", "#");
-  form.setAttribute("method", "post");
+//   const form = document.createElement("form");
+//   form.setAttribute("action", "#");
+//   form.setAttribute("method", "post");
 
-  const content = document.createElement("div");
-  content.classList.add("content");
-  const icon = document.createElement("i");
-  icon.classList.add("fa-regular", "fa-image");
-  const contentLabel = document.createElement("label");
-  contentLabel.setAttribute("for", "content");
-  contentLabel.textContent = "+ Ajouter photo";
-  const contentInput = document.createElement("input");
-  contentInput.setAttribute("type", "file");
-  contentInput.setAttribute("name", "content");
-  contentInput.setAttribute("id", "content");
-  content.appendChild(icon);
-  content.appendChild(contentLabel);
-  content.appendChild(contentInput);
+//   const content = document.createElement("div");
+//   content.classList.add("content");
+//   const icon = document.createElement("i");
+//   icon.classList.add("fa-regular", "fa-image");
+//   const contentLabel = document.createElement("label");
+//   contentLabel.setAttribute("for", "content");
+//   contentLabel.textContent = "+ Ajouter photo";
+//   const contentInput = document.createElement("input");
+//   contentInput.setAttribute("type", "file");
+//   contentInput.setAttribute("name", "content");
+//   contentInput.setAttribute("id", "content");
+//   content.appendChild(icon);
+//   content.appendChild(contentLabel);
+//   content.appendChild(contentInput);
 
-  const title = document.createElement("div");
-  title.classList.add("title-content");
-  const titleLabel = document.createElement("label");
-  titleLabel.setAttribute("for", "title");
-  titleLabel.textContent = "Titre";
-  const titleInput = document.createElement("input");
-  titleInput.setAttribute("type", "text");
-  titleInput.setAttribute("name", "title");
-  titleInput.setAttribute("id", "title");
-  title.appendChild(titleLabel);
-  title.appendChild(titleInput);
+//   const title = document.createElement("div");
+//   title.classList.add("title-content");
+//   const titleLabel = document.createElement("label");
+//   titleLabel.setAttribute("for", "title");
+//   titleLabel.textContent = "Titre";
+//   const titleInput = document.createElement("input");
+//   titleInput.setAttribute("type", "text");
+//   titleInput.setAttribute("name", "title");
+//   titleInput.setAttribute("id", "title");
+//   title.appendChild(titleLabel);
+//   title.appendChild(titleInput);
 
-  const cat = document.createElement("div");
-  cat.classList.add("cat-content");
-  const catLabel = document.createElement("label");
-  catLabel.setAttribute("for", "category");
-  catLabel.textContent = "Catégorie";
-  const categorySelect = document.createElement("select");
-  categorySelect.setAttribute("name", "category");
-  categorySelect.setAttribute("id", "category");
-  const emptyOption = document.createElement("option");
-  emptyOption.setAttribute("value", ""); // Valeur vide
-  emptyOption.textContent = "-- Sélectionnez une catégorie --";
-  const option1 = document.createElement("option");
-  option1.setAttribute("value", "Objets");
-  option1.textContent = "Objets";
-  const option2 = document.createElement("option");
-  option2.setAttribute("value", "Appartements");
-  option2.textContent = "Appartements";
-  const option3 = document.createElement("option");
-  option3.setAttribute("value", "Hotêls et Réstaurant");
-  option3.textContent = "Hotêls et Restaurants";
-  categorySelect.appendChild(emptyOption);
-  categorySelect.appendChild(option1);
-  categorySelect.appendChild(option2);
-  categorySelect.appendChild(option3);
-  cat.appendChild(catLabel);
-  cat.appendChild(categorySelect);
+//   const cat = document.createElement("div");
+//   cat.classList.add("cat-content");
+//   const catLabel = document.createElement("label");
+//   catLabel.setAttribute("for", "category");
+//   catLabel.textContent = "Catégorie";
+//   const categorySelect = document.createElement("select");
+//   categorySelect.setAttribute("name", "category");
+//   categorySelect.setAttribute("id", "category");
+//   const emptyOption = document.createElement("option");
+//   emptyOption.setAttribute("value", ""); // Valeur vide
+//   emptyOption.textContent = "-- Sélectionnez une catégorie --";
+//   const option1 = document.createElement("option");
+//   option1.setAttribute("value", "Objets");
+//   option1.textContent = "Objets";
+//   const option2 = document.createElement("option");
+//   option2.setAttribute("value", "Appartements");
+//   option2.textContent = "Appartements";
+//   const option3 = document.createElement("option");
+//   option3.setAttribute("value", "Hotêls et Réstaurant");
+//   option3.textContent = "Hotêls et Restaurants";
 
-  form.appendChild(content);
-  form.appendChild(title);
-  form.appendChild(cat);
+//   categorySelect.append(emptyOption, option1, option2, option3);
+//   cat.append(catLabel, categorySelect);
+//   form.append(content, title, cat);
 
-  formWrapper.appendChild(form);
+//   formWrapper.appendChild(form);
+//   return formWrapper;
+// }
+// modalWrapper.replaceChild(
+//   formWrapper,
+//   modalWrapper.querySelector(".gallery-wrapper")
+// );
 
-  modalWrapper.replaceChild(
-    formWrapper,
-    modalWrapper.querySelector(".gallery-wrapper")
-  );
-}
-
-function replaceWithGallery() {
+function createGallery() {
   const newGalleryWrapper = document.createElement("div");
   newGalleryWrapper.classList.add("gallery-wrapper");
 
-  modalWrapper.replaceChild(
-    newGalleryWrapper,
-    modalWrapper.querySelector(".form-wrapper")
-  );
-  fetchProject();
+  // modalWrapper.replaceChild(
+  //   newGalleryWrapper,
+  //   modalWrapper.querySelector(".form-wrapper")
+  // );
 }
