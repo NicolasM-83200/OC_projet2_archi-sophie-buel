@@ -394,12 +394,13 @@ footer nav ul {
   background-color: #e8f1f6;
   border-radius: 5px;
   width: 60%;
-  margin: 50px auto;
+  margin: 30px auto;
   padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   flex-direction: column;
+  position: relative;
 }
 .content i {
   font-size: 5rem;
@@ -407,6 +408,7 @@ footer nav ul {
 }
 label[for="content"] {
   cursor: pointer;
+  z-index: 2;
   color: #306685;
   background-color: #b9c5cc;
   padding: 10px 20px;
@@ -418,14 +420,28 @@ label[for="content"]:hover {
   background-color: #306685;
 }
 input[type="file"] {
-  display: none;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  cursor: pointer;
+}
+.preview img {
+  object-fit: cover;
+  z-index: 3;
+  height: 100%;
+  width: 40%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .title-content,
 .cat-content {
   display: flex;
   flex-direction: column;
   width: 70%;
-  margin: 40px auto;
+  margin: 30px auto;
   text-align: left;
 }
 .title-content,
@@ -441,11 +457,29 @@ select[name="category"] {
   outline: none;
   margin: 10px 0;
 }
+.form-wrapper span {
+  /* margin-bottom: 20px; */
+  display: block;
+  font-size: 0.8rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+  color: red;
+}
 .modal-wrapper input[type="submit"] {
   width: 50%;
   margin: 0;
   font-size: 1.2rem;
   padding: 10px;
+}
+.error input {
+  color: red;
+  border: 1px solid rgba(255, 0, 0, 0.527);
+}
+.error span {
+  visibility: visible;
+  opacity: 1;
+  color: red;
 }
 /* ******************* Fin formulaire ***************** */
 .btn-wrapper {
