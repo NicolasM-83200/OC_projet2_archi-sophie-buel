@@ -202,29 +202,34 @@ const createFormModal = () => {
   return `
     <h3>Ajout photo</h3>
     <div class="form-wrapper">
-      <form action="#" method="post">
+      <form action="http://localhost:5678/api/works" method="post" enctype="multipart/form-data">
         <div class="content">
           <i class="fa-regular fa-image"></i>
           <label for="content">+ Ajouter photo</label>
           <input type="file" name="content" id="content">
+          <div class="preview">
+            <p>Jpg, Png: 4mo max</p>
+          </div>
         </div>
         <div class="title-content">
           <label for="title">Titre</label>
           <input type="text" name="title" id="title">
+          <span></span>
         </div>
         <div class="cat-content">
           <label for="category">Catégorie</label>
           <select name="category" id="category">
             <option value="">-- Sélectionnez une catégorie --</option>
-            <option value="Objets">Objets</option>
-            <option value="Appartements">Appartements</option>
-            <option value="Hotêls et Réstaurant">Hotêls et Restaurants</option>
+            <option value="Objets" data-category-id="1">Objets</option>
+            <option value="Appartements" data-category-id="2">Appartements</option>
+            <option value="Hotêls et Réstaurant" data-category-id="3">Hotêls et Restaurants</option>
           </select>
+          <span></span>
+        </div>
+        <div class="btn-wrapper">
+          <input type="submit" value="Valider">
         </div>
       </form>
-    </div>
-    <div class="btn-wrapper">
-      <input type="submit" value="Valider">
     </div>`;
 };
 /**
@@ -266,6 +271,8 @@ function switchGalleryToForm() {
   const backBtn = document.querySelector(".back");
   addPhotoBtn.addEventListener("click", () => {
     displayFormModal();
+    displayPreview();
+    submitWork();
     backBtn.style.visibility = "visible";
   });
 }
@@ -314,4 +321,107 @@ const deleteWorkById = async (workId) => {
   } catch (error) {
     console.error("Erreur lors de requête de suppression.");
   }
+};
+
+/**
+ * fonction permettant d'ajouter une photo dans labase de données
+ */
+const addWork = async () => {
+  const image = document.getElementById("content");
+  const imageFile = image.files[0];
+  if (!imageFile) {
+    alert("Vous n'avez pas ajouté de photo !");
+    return;
+  }
+  const fileName = imageFile.name;
+  const fileExt = fileName.split(".").pop();
+  const title = document.getElementById("title").value;
+  const category = document.getElementById("category");
+  const selectedOption = category.options[category.selectedIndex];
+  const categoryId = selectedOption.dataset.categoryId;
+
+  const formData = new FormData();
+  formData.append("image", imageFile, fileName);
+  formData.append("title", title);
+  formData.append("category", categoryId);
+  const token = sessionStorage.getItem("token");
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  const options = {
+    method: "POST",
+    headers,
+    body: formData,
+  };
+  fetch("http://localhost:5678/api/works", options)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Réponse de l'api :", data);
+      const gallery = document.querySelector(".gallery");
+      const figure = createFigure(data);
+      gallery.appendChild(figure);
+      // toggleModal();
+    });
+};
+/**
+ * fonction pour soumettre le formulaire et envoyer la photo
+ */
+const submitWork = () => {
+  const formWrapper = document.querySelector(".form-wrapper");
+  const form = formWrapper.querySelector("form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    addWork();
+  });
+};
+/**
+ * fonction pour afficher la preview de l'image a ajouter
+ */
+const displayPreview = () => {
+  const input = document.querySelector(`input[type="file"]`);
+  input.addEventListener("change", updatePreview);
+};
+/**
+ * fonction pour mettre a jour la preview de l'image a ajouter
+ */
+function updatePreview() {
+  const input = document.querySelector(`input[type="file"]`);
+  const preview = document.querySelector(".preview");
+  while (preview.firstChild) {
+    preview.removeChild(preview.firstChild);
+  }
+  let currentFile = input.files[0];
+  if (currentFile.lenght === 0) {
+    let para = document.createElement("p");
+    para.textContent = "Auncun fichier sélectionné pour envoi";
+    preview.appendChild(para);
+  } else {
+    let image = document.createElement("img");
+    image.src = window.URL.createObjectURL(currentFile);
+    preview.appendChild(image);
+  }
+}
+const errorDisplay = (tag, message, valid) => {
+  const container = document.querySelector(`.${tag}-content`);
+  const span = document.querySelector(`.${tag}-content > span`);
+  !valid
+    ? (container.classList.add("error"), (span.textContent = message))
+    : (container.classList.remove("error"), (span.textContent = message));
+};
+const titleChecker = (value) => {
+  if ((value.length > 0 && value.length < 3) || value.length > 10) {
+    errorDisplay("title", "Veuillez remplir le champs.");
+    return;
+  }
+};
+const formChecker = () => {
+  const inputFileContainer = document.querySelector(".content");
+  const inputs = document.querySelectorAll(
+    'input[type="file"], #title, #category'
+  );
+  inputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      console.log(e.target);
+    });
+  });
 };
