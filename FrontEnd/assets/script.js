@@ -28,9 +28,7 @@ const validCategories = new Set([
   "Hotels & restaurants",
 ]);
 
-/*********************************************
- * **************** Fonctions ****************
- **********************************************/
+// * **************** Fonctions ****************
 
 /**
  * Fonction pour récupérer les travaux depuis l'api
@@ -289,6 +287,9 @@ function switchFormToGallery() {
     backBtn.style.visibility = "hidden";
   });
 }
+/**
+ * Fonction permettant la suppression d'un des travaus de la database
+ */
 function deleteWork() {
   window.addEventListener("click", (e) => {
     if (e.target.classList.contains("fa-trash-can")) {
@@ -323,6 +324,10 @@ const deleteWorkById = async (workId) => {
     console.error("Erreur lors de requête de suppression.");
   }
 };
+/**
+ * Fonction de création du body pour l'api (ajout de photo)
+ * @returns formData pour API
+ */
 const createFormData = () => {
   const image = document.getElementById("content");
   const imageFile = image.files[0];
@@ -395,7 +400,11 @@ const submitWork = () => {
     }
   });
 };
-// Fonction de validation du champ de contenu (image)
+/**
+ * Fonction validation entrée image (bonne extension et taille)
+ * @param {string} input HTML element
+ * @returns bool true ou false
+ */
 function isValidContent(input) {
   const allowedExtensions = ["jpg", "jpeg", "png"];
   const maxSize = 4 * 1024 * 1024; // 4 Mo
@@ -425,8 +434,11 @@ function isValidContent(input) {
   errorDisplay("image", "", true);
   return true;
 }
-
-// Fonction de validation du champ de titre
+/**
+ * Fonction validation champ "titre"
+ * @param {string} input HTML element
+ * @returns bool true ou false
+ */
 function isValidTitle(input) {
   const title = input.value.trim();
   if (title.length === 0) {
@@ -436,8 +448,11 @@ function isValidTitle(input) {
   errorDisplay("title", "", true);
   return true;
 }
-
-// Fonction de validation de la catégorie
+/**
+ * Fonction validation input celect "catégories"
+ * @param {string} select - HTML element
+ * @returns bool true ou false
+ */
 function isValidCategory(select) {
   const selectedOption = select.options[select.selectedIndex];
   const categoryId = selectedOption.dataset.categoryId;
@@ -449,7 +464,12 @@ function isValidCategory(select) {
   errorDisplay("cat", "", true);
   return true;
 }
-
+/**
+ * Fontcion d'affichage d'erreur pour validation formulaire
+ * @param {string} tag - Element HTML (balise)
+ * @param {string} message - message a afficher si classe "error"
+ * @param {boolean} valid - si false ajoute la classe "error", si true enlève ".error"
+ */
 const errorDisplay = (tag, message, valid) => {
   const container = document.querySelector(`.${tag}-container`);
   const span = document.querySelector(`.${tag}-container > span`);
@@ -457,7 +477,6 @@ const errorDisplay = (tag, message, valid) => {
     ? (container.classList.add("error"), (span.textContent = message))
     : (container.classList.remove("error"), (span.textContent = message));
 };
-
 /**
  * fonction pour afficher la preview de l'image a ajouter
  */
