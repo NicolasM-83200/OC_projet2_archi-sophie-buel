@@ -202,24 +202,25 @@ const createFormModal = () => {
   return `
     <h3>Ajout photo</h3>
     <div class="form-wrapper">
-      <form action="http://localhost:5678/api/works" method="post" enctype="multipart/form-data">
-        <div class="content">
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div class="image-container">
           <i class="fa-regular fa-image"></i>
           <label for="content">+ Ajouter photo</label>
           <input type="file" name="content" id="content">
+          <p>Jpg, Png: 4mo max</p>
           <div class="preview">
-            <p>Jpg, Png: 4mo max</p>
           </div>
+          <span></span>
         </div>
-        <div class="title-content">
+        <div class="title-container">
           <label for="title">Titre</label>
           <input type="text" name="title" id="title">
           <span></span>
         </div>
-        <div class="cat-content">
+        <div class="cat-container">
           <label for="category">Catégorie</label>
           <select name="category" id="category">
-            <option value="">-- Sélectionnez une catégorie --</option>
+            <option value="" data-category-id="0">-- Sélectionnez une catégorie --</option>
             <option value="Objets" data-category-id="1">Objets</option>
             <option value="Appartements" data-category-id="2">Appartements</option>
             <option value="Hotêls et Réstaurant" data-category-id="3">Hotêls et Restaurants</option>
@@ -322,17 +323,9 @@ const deleteWorkById = async (workId) => {
     console.error("Erreur lors de requête de suppression.");
   }
 };
-
-/**
- * fonction permettant d'ajouter une photo dans labase de données
- */
-const addWork = async () => {
+const createFormData = () => {
   const image = document.getElementById("content");
   const imageFile = image.files[0];
-  if (!imageFile) {
-    alert("Vous n'avez pas ajouté de photo !");
-    return;
-  }
   const fileName = imageFile.name;
   const fileExt = fileName.split(".").pop();
   const title = document.getElementById("title").value;
@@ -344,6 +337,13 @@ const addWork = async () => {
   formData.append("image", imageFile, fileName);
   formData.append("title", title);
   formData.append("category", categoryId);
+
+  return formData;
+};
+/**
+ * fonction permettant d'ajouter une photo dans labase de données
+ */
+const addWork = async () => {
   const token = sessionStorage.getItem("token");
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -351,7 +351,7 @@ const addWork = async () => {
   const options = {
     method: "POST",
     headers,
-    body: formData,
+    body: createFormData(),
   };
   fetch("http://localhost:5678/api/works", options)
     .then((response) => response.json())
@@ -360,7 +360,6 @@ const addWork = async () => {
       const gallery = document.querySelector(".gallery");
       const figure = createFigure(data);
       gallery.appendChild(figure);
-      // toggleModal();
     });
 };
 /**
@@ -369,11 +368,96 @@ const addWork = async () => {
 const submitWork = () => {
   const formWrapper = document.querySelector(".form-wrapper");
   const form = formWrapper.querySelector("form");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    addWork();
+  const contentInput = document.getElementById("content");
+  const titleInput = document.getElementById("title");
+  const categorySelect = document.getElementById("category");
+  // Ajoutez un gestionnaire d'événement à la soumission du formulaire
+  form.addEventListener("submit", function (event) {
+    // Validez les champs
+    let isValid = true;
+    // Validation du champ de contenu (image)
+    if (!isValidContent(contentInput)) {
+      isValid = false;
+    }
+    // Validation du champ de titre
+    if (!isValidTitle(titleInput)) {
+      isValid = false;
+    }
+    // Validation de la catégorie (assurez-vous qu'une option valide est sélectionnée)
+    if (!isValidCategory(categorySelect)) {
+      isValid = false;
+    }
+    // Empêchez la soumission du formulaire si la validation a échoué
+    if (!isValid) {
+      event.preventDefault();
+    } else {
+      addWork();
+    }
   });
 };
+// Fonction de validation du champ de contenu (image)
+function isValidContent(input) {
+  const allowedExtensions = ["jpg", "jpeg", "png"];
+  const maxSize = 4 * 1024 * 1024; // 4 Mo
+
+  const file = input.files[0];
+
+  if (!file) {
+    errorDisplay("image", "Veuillez sélectionner une image.");
+    return false;
+  }
+
+  const fileName = file.name.toLowerCase();
+  const fileExtension = fileName.split(".").pop();
+
+  if (!allowedExtensions.includes(fileExtension)) {
+    errorDisplay(
+      "image",
+      "Seules les images au format JPG et PNG sont autorisées."
+    );
+    return false;
+  }
+
+  if (file.size > maxSize) {
+    errorDisplay("image", "L'image ne doit pas dépasser 4 Mo.");
+    return false;
+  }
+  errorDisplay("image", "", true);
+  return true;
+}
+
+// Fonction de validation du champ de titre
+function isValidTitle(input) {
+  const title = input.value.trim();
+  if (title.length === 0) {
+    errorDisplay("title", "Le champ titre est obligatoire.");
+    return false;
+  }
+  errorDisplay("title", "", true);
+  return true;
+}
+
+// Fonction de validation de la catégorie
+function isValidCategory(select) {
+  const selectedOption = select.options[select.selectedIndex];
+  const categoryId = selectedOption.dataset.categoryId;
+
+  if (!categoryId || categoryId === "0") {
+    errorDisplay("cat", "Veuillez sélectionner une catégorie valide.");
+    return false;
+  }
+  errorDisplay("cat", "", true);
+  return true;
+}
+
+const errorDisplay = (tag, message, valid) => {
+  const container = document.querySelector(`.${tag}-container`);
+  const span = document.querySelector(`.${tag}-container > span`);
+  !valid
+    ? (container.classList.add("error"), (span.textContent = message))
+    : (container.classList.remove("error"), (span.textContent = message));
+};
+
 /**
  * fonction pour afficher la preview de l'image a ajouter
  */
@@ -385,43 +469,13 @@ const displayPreview = () => {
  * fonction pour mettre a jour la preview de l'image a ajouter
  */
 function updatePreview() {
-  const input = document.querySelector(`input[type="file"]`);
+  const input = document.getElementById("content");
   const preview = document.querySelector(".preview");
   while (preview.firstChild) {
     preview.removeChild(preview.firstChild);
   }
-  let currentFile = input.files[0];
-  if (currentFile.lenght === 0) {
-    let para = document.createElement("p");
-    para.textContent = "Auncun fichier sélectionné pour envoi";
-    preview.appendChild(para);
-  } else {
-    let image = document.createElement("img");
-    image.src = window.URL.createObjectURL(currentFile);
-    preview.appendChild(image);
-  }
+  const currentFile = input.files[0];
+  const image = document.createElement("img");
+  image.src = URL.createObjectURL(currentFile);
+  preview.appendChild(image);
 }
-const errorDisplay = (tag, message, valid) => {
-  const container = document.querySelector(`.${tag}-content`);
-  const span = document.querySelector(`.${tag}-content > span`);
-  !valid
-    ? (container.classList.add("error"), (span.textContent = message))
-    : (container.classList.remove("error"), (span.textContent = message));
-};
-const titleChecker = (value) => {
-  if ((value.length > 0 && value.length < 3) || value.length > 10) {
-    errorDisplay("title", "Veuillez remplir le champs.");
-    return;
-  }
-};
-const formChecker = () => {
-  const inputFileContainer = document.querySelector(".content");
-  const inputs = document.querySelectorAll(
-    'input[type="file"], #title, #category'
-  );
-  inputs.forEach((input) => {
-    input.addEventListener("input", (e) => {
-      console.log(e.target);
-    });
-  });
-};
