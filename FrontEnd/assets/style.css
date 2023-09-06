@@ -327,7 +327,6 @@ footer nav ul {
   transform: translate(-50%, -50%);
   background-color: #fff;
   padding: 10px;
-  height: 670px;
   width: 550px;
   border-radius: 5px;
   text-align: center;
@@ -390,7 +389,7 @@ footer nav ul {
 .form-wrapper {
   height: 65%;
 }
-.content {
+.image-container {
   background-color: #e8f1f6;
   border-radius: 5px;
   width: 60%;
@@ -402,7 +401,7 @@ footer nav ul {
   flex-direction: column;
   position: relative;
 }
-.content i {
+.image-container i {
   font-size: 5rem;
   color: #b9c5cc;
 }
@@ -412,6 +411,7 @@ label[for="content"] {
   color: #306685;
   background-color: #b9c5cc;
   padding: 10px 20px;
+  margin: 5px;
   border-radius: 25px;
   transition: all 300ms ease;
 }
@@ -436,16 +436,16 @@ input[type="file"] {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.title-content,
-.cat-content {
+.title-container,
+.cat-container {
   display: flex;
   flex-direction: column;
   width: 70%;
   margin: 30px auto;
   text-align: left;
 }
-.title-content,
-.cat-content label {
+.title-container,
+.cat-container label {
   font-weight: bold;
 }
 input[type="text"],
@@ -458,7 +458,6 @@ select[name="category"] {
   margin: 10px 0;
 }
 .form-wrapper span {
-  /* margin-bottom: 20px; */
   display: block;
   font-size: 0.8rem;
   visibility: hidden;
@@ -472,7 +471,8 @@ select[name="category"] {
   font-size: 1.2rem;
   padding: 10px;
 }
-.error input {
+.error input,
+.error select {
   color: red;
   border: 1px solid rgba(255, 0, 0, 0.527);
 }
@@ -480,6 +480,10 @@ select[name="category"] {
   visibility: visible;
   opacity: 1;
   color: red;
+}
+.image-container.error span {
+  position: absolute;
+  bottom: -20px;
 }
 /* ******************* Fin formulaire ***************** */
 .btn-wrapper {
