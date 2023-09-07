@@ -271,17 +271,6 @@ footer nav ul {
 .header-top i {
   margin-right: 10px;
 }
-.header-top button {
-  padding: 10px 15px;
-  border-radius: 50px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-#introduction .modal-btn {
-  width: 80%;
-  margin: 10px auto 0;
-}
 #portfolio .title {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
