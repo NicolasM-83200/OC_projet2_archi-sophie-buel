@@ -127,7 +127,7 @@ const displayLoginUser = () => {
     modalsBtn.forEach((modalBtn) => (modalBtn.style.visibility = "visible"));
   }
 
-  logoutBtn.addEventListener("click", (e) => {
+  logoutBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     sessionStorage.removeItem("token");
     headerTop.style.display = "none";
@@ -135,6 +135,8 @@ const displayLoginUser = () => {
     loginBtn.style.display = "block";
     filterBar.style.display = "flex";
     modalsBtn.forEach((modalBtn) => (modalBtn.style.visibility = "hidden"));
+    await getDatas();
+    displayFigureInContainer(".gallery", category);
   });
 };
 /**
@@ -236,8 +238,7 @@ const createFormModal = () => {
  * @returns la galerie photo
  */
 const createGalleryModal = () => {
-  const modalContent = document.createElement("div");
-  modalContent.classList.add("modal-content");
+  const container = document.createElement("div");
   const heading = document.createElement("h3");
   heading.textContent = "Galerie photo";
   const galleryWrapper = document.createElement("div");
@@ -248,19 +249,9 @@ const createGalleryModal = () => {
   addPhotoBtn.classList.add("btn");
   addPhotoBtn.classList.add("add-photo-btn");
   addPhotoBtn.textContent = "Ajouter une photo";
-  const deleteBtn = document.createElement("button");
-  deleteBtn.classList.add("delete-gallery");
-  deleteBtn.textContent = "Supprimer la galerie";
-  btnWrapper.append(addPhotoBtn, deleteBtn);
-  modalContent.append(heading, galleryWrapper, btnWrapper);
-  return modalContent;
-  // return `
-  // <h3>Galerie photo</h3>
-  // 	<div class="gallery-wrapper"></div>
-  //   <div class="btn-wrapper">
-  //     <button class="btn add-photo-btn">Ajouter une photo</button>
-  //     <button class="delete-gallery">Supprimer la galerie</button>
-  //   </div>`;
+  btnWrapper.append(addPhotoBtn);
+  container.append(heading, galleryWrapper, btnWrapper);
+  return container;
 };
 /**
  * permute l'affichage de la modal pour afficher le formulaire
@@ -348,7 +339,7 @@ const createFormData = () => {
 /**
  * fonction permettant d'ajouter une photo dans labase de données
  */
-const addWork = async () => {
+const addWork = () => {
   const token = sessionStorage.getItem("token");
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -396,7 +387,9 @@ const submitWork = () => {
     if (!isValid) {
       event.preventDefault();
     } else {
+      event.preventDefault();
       addWork();
+      toggleModal();
     }
   });
 };
