@@ -261,6 +261,7 @@ function switchGalleryToForm() {
   const backBtn = document.querySelector(".back");
   addPhotoBtn.addEventListener("click", () => {
     displayFormModal();
+    isValidForm();
     displayPreview();
     submitWork();
     backBtn.style.visibility = "visible";
@@ -322,18 +323,28 @@ const deleteWorkById = async (workId) => {
 const createFormData = () => {
   const image = document.getElementById("content");
   const imageFile = image.files[0];
+  if (imageFile === undefined) {
+    isValidContent(image);
+    return false;
+  }
   const fileName = imageFile.name;
   const fileExt = fileName.split(".").pop();
   const title = document.getElementById("title").value;
+  if (title.length < 1) {
+    isValidTitle(document.getElementById("title"));
+    return false;
+  }
   const category = document.getElementById("category");
   const selectedOption = category.options[category.selectedIndex];
   const categoryId = selectedOption.dataset.categoryId;
-
+  if (categoryId === "0") {
+    isValidCategory(category);
+    return false;
+  }
   const formData = new FormData();
   formData.append("image", imageFile, fileName);
   formData.append("title", title);
   formData.append("category", categoryId);
-
   return formData;
 };
 /**
@@ -350,13 +361,46 @@ const addWork = () => {
     body: createFormData(),
   };
   fetch("http://localhost:5678/api/works", options)
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.ok) {
+        toggleModal();
+      } else {
+        return;
+      }
+      return response.json();
+    })
     .then((data) => {
       console.log("Réponse de l'api :", data);
       const gallery = document.querySelector(".gallery");
       const figure = createFigure(data);
       gallery.appendChild(figure);
+    })
+    .catch(() => {
+      alert("L'envoi à échoué");
     });
+};
+/**
+ * Fonction vérification formulaire
+ */
+const isValidForm = () => {
+  const inputs = document.querySelectorAll("#content,#title,#category");
+  inputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      switch (e.target.id) {
+        case "content":
+          isValidContent(e.target);
+          break;
+        case "title":
+          isValidTitle(e.target);
+          break;
+        case "category":
+          isValidCategory(e.target);
+          break;
+        default:
+          null;
+      }
+    });
+  });
 };
 /**
  * fonction pour soumettre le formulaire et envoyer la photo
@@ -364,33 +408,10 @@ const addWork = () => {
 const submitWork = () => {
   const formWrapper = document.querySelector(".form-wrapper");
   const form = formWrapper.querySelector("form");
-  const contentInput = document.getElementById("content");
-  const titleInput = document.getElementById("title");
-  const categorySelect = document.getElementById("category");
   // Ajoutez un gestionnaire d'événement à la soumission du formulaire
   form.addEventListener("submit", function (event) {
-    // Validez les champs
-    let isValid = true;
-    // Validation du champ de contenu (image)
-    if (!isValidContent(contentInput)) {
-      isValid = false;
-    }
-    // Validation du champ de titre
-    if (!isValidTitle(titleInput)) {
-      isValid = false;
-    }
-    // Validation de la catégorie (assurez-vous qu'une option valide est sélectionnée)
-    if (!isValidCategory(categorySelect)) {
-      isValid = false;
-    }
-    // Empêchez la soumission du formulaire si la validation a échoué
-    if (!isValid) {
-      event.preventDefault();
-    } else {
-      event.preventDefault();
-      addWork();
-      toggleModal();
-    }
+    event.preventDefault();
+    addWork();
   });
 };
 /**
