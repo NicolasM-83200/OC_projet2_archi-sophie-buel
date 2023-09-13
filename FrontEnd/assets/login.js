@@ -4,24 +4,24 @@ const form = document.querySelector("form");
 login.style.fontWeight = "bold";
 
 form.addEventListener("submit", (e) => {
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  let isValid = true;
-
-  if (!isValidEmail(emailInput.value)) {
-    isValid = false;
-  }
-  if (!isValidPassword(passwordInput)) {
-    isValid = false;
-  }
-  if (!isValid) {
-    e.preventDefault();
-  } else {
-    e.preventDefault();
-    loginUser();
-  }
+  e.preventDefault();
+  loginUser();
 });
-
+const inputs = document.querySelectorAll("#email, #password");
+inputs.forEach((input) => {
+  input.addEventListener("input", (e) => {
+    switch (e.target.id) {
+      case "email":
+        isValidEmail(e.target.value);
+        break;
+      case "password":
+        isValidPassword(e.target);
+        break;
+      default:
+        null;
+    }
+  });
+});
 /**
  * Fontcion d'affichage d'erreur pour validation formulaire
  * @param {string} tag - Element HTML (balise)
@@ -87,19 +87,13 @@ const loginUser = () => {
     .then((res) => {
       //vérification de la réponse du serveur et redirection en cas d'utilisateur autorisé
       if (res.ok) {
-        console.log(res.status);
         window.location.href = "./index.html";
       } else {
-        alert("Erreur dans l'identifiant ou le mote de passe");
-        errorDisplay("email", "");
-        errorDisplay("password", "");
+        errorDisplay("email", "Le mail n'est pas valide");
+        errorDisplay("password", 'Le champ "Mot de passe" est obligatoire');
       }
       return res.json();
     })
     //stockage du token d'authentification dans le session storage
     .then((data) => sessionStorage.setItem("token", data.token));
-  // .catch((error) => {
-  //   console.error("erreeeeeur :", error);
-  //   alert("Erreur dans l'identifiant ou le mote de passe");
-  // });
 };
