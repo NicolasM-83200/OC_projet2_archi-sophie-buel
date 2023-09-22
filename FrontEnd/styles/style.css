@@ -138,7 +138,7 @@ a:hover {
   text-align: center;
   margin-bottom: 1em;
 }
-#portfolio ul {
+.filter {
   display: flex;
   justify-content: center;
   gap: 12px;

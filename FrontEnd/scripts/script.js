@@ -1,4 +1,7 @@
 window.addEventListener("load", async () => {
+  await getDataCategories();
+  console.log(validCategories);
+  displayFilterBtn();
   await getDatas();
   displayFigureInContainer(".gallery", category);
   displayLoginUser();
@@ -6,27 +9,17 @@ window.addEventListener("load", async () => {
   deleteWork();
   closeModal();
 });
-// actions des boutons filtre
-document.querySelectorAll(".filter-btn").forEach((button) => {
-  button.addEventListener("click", () => {
-    category = button.getAttribute("data-category");
-    displayFigureInContainer(".gallery", category);
-  });
-});
 
 /**
  * Déclaration variables globales
  */
 const modal = document.getElementById("modal2");
 let datas = null; // Initialisation d'une variable pour stocker les données du fetch
+let dataCategories = null; // Initialisation d'une variable pour stocker les categories
 let category = "all"; // Initialisation de la variable sur "all" pour afficher tous les éléments
+
 // Utilisation d'un Set pour stocker les catégories valides
-const validCategories = new Set([
-  "all",
-  "Objets",
-  "Appartements",
-  "Hotels & restaurants",
-]);
+const validCategories = new Set(["all"]);
 
 // * **************** Fonctions ****************
 
@@ -41,11 +34,60 @@ const getDatas = async () => {
     }
     const data = await res.json();
     datas = data; // Mise à jour de la variable globale datas avec les données.
+    console.log(datas);
     return data; // Renvoie également les données pour pouvoir les utiliser dans la chaîne de promesses ou en dehors.
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
     throw error;
   }
+};
+
+/**
+ * Récupération des catégories depuis l'api
+ */
+const getDataCategories = async () => {
+  const res = await fetch("http://localhost:5678/api/categories");
+  const data = await res.json();
+  dataCategories = data;
+
+  // Exemple d'ajout d'une nouvelle catégorie
+  // let newCat = {
+  //   id: 4,
+  //   name: "Nouvelle categorie",
+  // };
+  // dataCategories.push(newCat);
+  // Fin de l'exemple
+
+  dataCategories.forEach((category) => {
+    validCategories.add(category.name);
+  });
+};
+/**
+ * Création des boutons filtres et affichage des boutons sur la page
+ */
+const displayFilterBtn = () => {
+  const filterButtonContainer = document.querySelector(".filter");
+  const allFilterBtn = document.createElement("button");
+  allFilterBtn.classList.add("btn");
+  allFilterBtn.textContent = "Tous";
+  allFilterBtn.addEventListener("click", async () => {
+    await getDatas();
+    displayFigureInContainer(".gallery", "all");
+  });
+  filterButtonContainer.append(allFilterBtn);
+
+  dataCategories.forEach((category) => {
+    const button = document.createElement("button");
+    button.classList.add("btn");
+    button.textContent = category.name;
+    button.dataset.categoryName = category.name;
+    button.addEventListener("click", async () => {
+      category = button.getAttribute("data-category-name");
+      await getDatas();
+      displayFigureInContainer(".gallery", category);
+    });
+    filterButtonContainer.append(button);
+  });
 };
 /**
  * Fonction qui créer la figure
@@ -69,7 +111,6 @@ const createFigure = (data) => {
  * @param {string} category - Catégorie de filtre
  */
 const displayFigureInContainer = (HTMLelement, category) => {
-  console.log(datas);
   const container = document.querySelector(HTMLelement);
   const filteredWorks = filterWorks(datas, category);
   if (HTMLelement === ".gallery") {
@@ -183,6 +224,20 @@ function windowOnClick(e) {
 const displayFormModal = () => {
   const modalContent = document.querySelector(".modal-content");
   modalContent.innerHTML = createFormModal();
+
+  const categorySelect = document.getElementById("category");
+  while (categorySelect.children.length > 1) {
+    categorySelect.removeChild(categorySelect.lastChild);
+  }
+  dataCategories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    option.dataset.categoryId = category.id;
+
+    categorySelect.appendChild(option);
+  });
+
   switchFormToGallery();
 };
 /**
@@ -220,10 +275,7 @@ const createFormModal = () => {
         <div class="cat-container">
           <label for="category">Catégorie</label>
           <select name="category" id="category">
-            <option value="" data-category-id="0">-- Sélectionnez une catégorie --</option>
-            <option value="Objets" data-category-id="1">Objets</option>
-            <option value="Appartements" data-category-id="2">Appartements</option>
-            <option value="Hotêls et Réstaurant" data-category-id="3">Hotêls et Restaurants</option>
+            <option value="0" data-category-id="0">-- Sélectionnez une catégorie --</option>
           </select>
           <span></span>
         </div>
