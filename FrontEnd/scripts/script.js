@@ -1,6 +1,6 @@
 window.addEventListener("load", async () => {
   await getDataCategories();
-  console.log(validCategories);
+  console.log(dataCategories);
   displayFilterBtn();
   await getDatas();
   displayFigureInContainer(".gallery", category);
@@ -13,6 +13,7 @@ window.addEventListener("load", async () => {
 /**
  * Déclaration variables globales
  */
+URL = "http://localhost:5678/api";
 const modal = document.getElementById("modal2");
 let datas = null; // Initialisation d'une variable pour stocker les données du fetch
 let dataCategories = null; // Initialisation d'une variable pour stocker les categories
@@ -22,13 +23,84 @@ let category = "all"; // Initialisation de la variable sur "all" pour afficher t
 const validCategories = new Set(["all"]);
 
 // * **************** Fonctions ****************
+const createCat = () => {
+  const addCatBtn = document.getElementById("addCat");
+  addCatBtn.addEventListener("click", async () => {
+    try {
+      const name = document.getElementById("addCatInp").value;
+      const token = sessionStorage.getItem("token");
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+      const options = {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ name }),
+      };
+      if (name === "") {
+        throw new Error("Veuillez entrer un nom de catégorie");
+      }
+      const response = await fetch(`${URL}/categories`, options);
+      if (response.ok) {
+        console.log("La catégorie a bien été ajoutée");
+        displayFormModal();
+      } else {
+        throw new Error(
+          "Une erreur est survenue lors de l'ajout de la catégorie"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+};
 
+const removeCategorie = () => {
+  const delCatBtn = document.getElementById("delCat");
+  delCatBtn.addEventListener("click", async () => {
+    const cat = document.getElementById("delCatInp");
+    const selectedOption = cat.options[cat.selectedIndex];
+    const catId = selectedOption.dataset.categoryId;
+    if (catId > "0") {
+      removeCatById(catId);
+      selectedOption.remove();
+      displayFormModal();
+      alert(`La catégorie ${selectedOption.textContent} a bien été supprimée`);
+    } else {
+      alert("Sélectionnez une catégorie à supprimer");
+    }
+  });
+};
+
+const removeCatById = async (catId) => {
+  try {
+    const token = sessionStorage.getItem("token");
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const options = {
+      method: "DELETE",
+      headers,
+    };
+    const response = await fetch(`${URL}/categories/${catId}`, options);
+    if (response.ok) {
+      console.log("La catégorie a bien été supprimée");
+    } else {
+      throw new Error(
+        "Erreur lors de la requête de suppression de catégorie car vous n'êtes pas connecté"
+      );
+    }
+  } catch (error) {
+    alert(error);
+  }
+};
 /**
  * Fonction pour récupérer les travaux depuis l'api
  */
 const getDatas = async () => {
   try {
-    const res = await fetch("http://localhost:5678/api/works");
+    const res = await fetch(`${URL}/works`);
     if (!res.ok) {
       throw new Error("Erreur de requête");
     }
@@ -46,7 +118,7 @@ const getDatas = async () => {
  * Récupération des catégories depuis l'api
  */
 const getDataCategories = async () => {
-  const res = await fetch("http://localhost:5678/api/categories");
+  const res = await fetch(`${URL}/categories`);
   const data = await res.json();
   dataCategories = data;
 
@@ -221,22 +293,27 @@ function windowOnClick(e) {
 /**
  * affiche le formulaire dans la modal
  */
-const displayFormModal = () => {
+const displayFormModal = async () => {
   const modalContent = document.querySelector(".modal-content");
   modalContent.innerHTML = createFormModal();
+  await getDataCategories();
 
-  const categorySelect = document.getElementById("category");
-  while (categorySelect.children.length > 1) {
-    categorySelect.removeChild(categorySelect.lastChild);
-  }
-  dataCategories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category.id;
-    option.textContent = category.name;
-    option.dataset.categoryId = category.id;
+  const categorySelect = document.querySelectorAll("#category, #delCatInp");
+  categorySelect.forEach((select) => {
+    while (select.children.length > 1) {
+      select.removeChild(select.lastChild);
+    }
+    dataCategories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      option.dataset.categoryId = category.id;
 
-    categorySelect.appendChild(option);
+      select.appendChild(option);
+    });
   });
+  createCat();
+  removeCategorie();
 
   switchFormToGallery();
 };
@@ -280,9 +357,23 @@ const createFormModal = () => {
           <span></span>
         </div>
         <div class="btn-wrapper">
-          <input type="submit" value="Valider">
+        <input type="submit" value="Valider">
         </div>
       </form>
+      <div class="manage-cat-container">
+        <div class="add-new-cat">
+          <label for="addCatInp">Ajouter une catégorie</label>
+          <input type="text" name="addCatInp" id="addCatInp">
+          <button id="addCat" class="btn">Valider</button>
+        </div>
+        <div class="delete-cat">
+          <label for="delCatInp">Supprimer une catégorie</label>
+          <select name="delCatInp" id="delCatInp">
+            <option value="0" data-category-id="0">-- Sélectionnez une catégorie --</option>
+          </select>
+          <button id="delCat" class="btn">Valider</button>
+        </div>
+      </div>
     </div>`;
 };
 /**
@@ -353,7 +444,7 @@ function deleteWork() {
 const deleteWorkById = async (workId) => {
   try {
     const token = sessionStorage.getItem("token");
-    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+    const response = await fetch(`${URL}/works/${workId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -412,7 +503,7 @@ const addWork = () => {
     headers,
     body: createFormData(),
   };
-  fetch("http://localhost:5678/api/works", options)
+  fetch(`${URL}/works`, options)
     .then((response) => {
       if (response.ok) {
         toggleModal();
